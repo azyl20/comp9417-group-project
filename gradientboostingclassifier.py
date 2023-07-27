@@ -7,12 +7,11 @@ from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 from sklearn.ensemble import HistGradientBoostingClassifier
 
 train_df = pd.read_csv("train.csv")
-test_df = pd.read_csv("test.csv")
+test_df = pd.read_csv("test.csv", index_col=0)
 greek_df = pd.read_csv("greeks.csv")
 
 # removing Id column
 train_df.drop(columns=['Id'], inplace=True)
-test_df.drop(columns=['Id'], inplace=True)
 
 # dropping 'EJ' which is a categorical feature
 train_df.drop(columns=['EJ'], inplace=True)
@@ -40,9 +39,9 @@ disp = ConfusionMatrixDisplay(confusion_matrix=confusion)
 print("Train Score:")
 print(gradboost.score(X_train, Y_train.ravel()))
 disp.plot()
-plt.show()
+# plt.show()
 
-# Y_pred = gradboost.predict(X_test)
+Y_pred = gradboost.predict_proba(X_test)
 # confusion_test = confusion_matrix(Y_test, Y_pred)
 # disp_test = ConfusionMatrixDisplay(confusion_matrix=confusion_test)
 
@@ -50,3 +49,17 @@ plt.show()
 # print(gradboost.score(X_test, Y_test.ravel()))
 # disp_test.plot()
 # plt.show()
+
+print(test_df.index)
+print(gradboost.classes_)
+print(Y_pred)
+
+submission = {}
+submission["class_0"] = Y_pred[:, 0]
+submission["class_1"] = Y_pred[:, 1]
+
+submission_df = pd.DataFrame(submission, index=test_df.index)
+
+print(submission_df)
+
+submission_df.to_csv('submission.csv')
