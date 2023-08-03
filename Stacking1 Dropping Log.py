@@ -20,18 +20,14 @@ train_df.drop(columns=['Id'], inplace=True)
 train_df.dropna(inplace=True)
 test_df.dropna(inplace=True)
 
-# encoding 'EJ' which is a categorical feature
-train_df['EJ'] = train_df['EJ'].apply(lambda x: 1 if x == 'B' else 0)
-test_df['EJ'] = test_df['EJ'].apply(lambda x: 1 if x == 'B' else 0)
+# dropping 'EJ' which is a categorical feature
+train_df.drop(columns=['EJ'], inplace=True)
+test_df.drop(columns=['EJ'], inplace=True)
 
 
 # split into X and Y
 Y = np.hsplit(train_df, [-1])[1].to_numpy()
 X = np.hsplit(train_df, [-1])[0].to_numpy()
-
-# # standardising and scaling Xs
-# scaler = StandardScaler()
-# X = scaler.fit_transform(X)
 
 stack_train = []
 stack_test = []
@@ -39,11 +35,15 @@ forest_train = []
 forest_test = []
 boost_train = []
 boost_test = []
-knn_train = []
-knn_test = []
+log_train = []
+log_test = []
 
-for i in range(50):
+for i in range(200):
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.15)
+    # standardising and scaling training Xs
+    scaler = StandardScaler()
+    X_train = scaler.fit_transform(X_train)
+    X_test = scaler.transform(X_test)
 
     ############## RANDOM FOREST ###############
 
@@ -53,16 +53,16 @@ for i in range(50):
     lgclassifier = LogisticRegression()
 
     ############## GRADIENT BOOSTING CLASSIFIER ##############
-    gradboost = HistGradientBoostingClassifier(max_depth=2)
+    gradboost = HistGradientBoostingClassifier(max_depth=3)
 
     ############## K NEIGHBOURS ##############
-    knn = KNeighborsClassifier(n_neighbors=3)
+    log = LogisticRegression(C=0.1)
 
     ############## STACKING ##############
     estimators = [
         ('rf', forest),
         ('boost', gradboost),
-        ('knn', knn),
+        ('log', log),
     ]
 
     stack_classifier = StackingClassifier(
@@ -103,11 +103,11 @@ for i in range(50):
     # print(
     #     f"\nHistGradientBoosting classifier testing Accuracy: {test_score}")
 
-    knn.fit(X_train, Y_train.ravel())
-    train_score = knn.score(X_train, Y_train)
-    knn_train.append(train_score)
-    test_score = knn.score(X_test, Y_test)
-    knn_test.append(test_score)
+    log.fit(X_train, Y_train.ravel())
+    train_score = log.score(X_train, Y_train)
+    log_train.append(train_score)
+    test_score = log.score(X_test, Y_test)
+    log_test.append(test_score)
     # print(
     #     f"\nK Nearest Neighbours classifier training Accuracy: {train_score}")
 
@@ -115,11 +115,11 @@ for i in range(50):
     #     f"\nK Nearest Neighbours classifier testing Accuracy: {test_score}")
 
 labels = ['stack_train', 'forest_train',
-          'boost_train', 'knn_train']
+          'boost_train', 'log_train']
 
 i = 0
-for data in [stack_train, forest_train, boost_train, knn_train]:
-    plt.scatter(list(range(50)), data, label=labels[i], marker='.')
+for data in [stack_train, forest_train, boost_train, log_train]:
+    plt.scatter(list(range(200)), data, label=labels[i], marker='.')
     i += 1
 
 plt.xlabel('iterations')
@@ -129,10 +129,10 @@ plt.legend()
 plt.show()
 
 labels = ['stack_test', 'forest_test',
-          'boost_test', 'knn_test']
+          'boost_test', 'log_test']
 i = 0
-for data in [stack_test, forest_test, boost_test, knn_test]:
-    plt.scatter(list(range(50)), data, label=labels[i], marker='.')
+for data in [stack_test, forest_test, boost_test, log_test]:
+    plt.scatter(list(range(200)), data, label=labels[i], marker='.')
     i += 1
 
 plt.xlabel('iterations')
@@ -144,19 +144,25 @@ plt.show()
 print(f"Stacking test average: {sum(stack_test)/len(stack_test)}")
 print(f"Random Forest test average: {sum(forest_test)/len(forest_test)}")
 print(f"gradient boosting test average: {sum(boost_test)/len(boost_test)}")
-print(f"KNN test average: {sum(knn_test)/len(knn_test)}")
+print(f"Log. regression test average: {sum(log_test)/len(log_test)}")
 
-fig, axs = plt.subplots(2, 2, sharey='col')
+fig, axs = plt.subplots(2, 2)
 axs[0, 0].boxplot(stack_test)
 axs[0, 0].set_title('Stacking Scores')
 axs[0, 1].boxplot(forest_test)
 axs[0, 1].set_title('Random Forest Scores')
 axs[1, 0].boxplot(boost_test)
 axs[1, 0].set_title('HistGBC scores')
-axs[1, 1].boxplot(knn_test)
-axs[1, 1].set_title('KNN scores')
+axs[1, 1].boxplot(log_test)
+axs[1, 1].set_title('Log. Regression scores')
+
+for i in range(2):
+    for j in range(2):
+        axs[i, j].set_ylim(0.7, 1)
+        axs[i, j].xaxis.set_visible(False)
 
 plt.show()
+
 
 # print(gradboost.predict_proba(X_test))
 

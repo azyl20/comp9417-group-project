@@ -38,7 +38,8 @@ X_test = scaler.fit_transform(X_test)
 
 ############## RANDOM FOREST ###############
 
-forest = RandomForestClassifier(n_estimators=100, random_state=123)
+forest = RandomForestClassifier(
+    n_estimators=400, min_samples_split=2, min_samples_leaf=1, max_depth=None, random_state=123)
 
 ############## LOGISTIC REGRESSION ###############
 lgclassifier = LogisticRegression(random_state=123)
