@@ -36,7 +36,8 @@ dropped_X = np.hsplit(train_df_dropped_cat, [-1])[0].to_numpy()
 
 model_names = ["Log. Regression", "KNN", "Random Forest", "SVM",
                "HGBC depth 2"]
-num_times_better = [0, 0, 0, 0, 0]
+total_dropping = [0, 0, 0, 0, 0]
+total_PCA = [0, 0, 0, 0, 0]
 
 
 def displayScreePlot():
@@ -152,12 +153,26 @@ for i in range(500):
         j += 1
 
     for k, value in enumerate(dropped_model_test_data):
-        if pca_model_test_data[k] > value:
-            num_times_better[k] += 1
+        total_dropping[k] += value
+
+    for k, value in enumerate(pca_model_test_data):
+        total_PCA[k] += value
 
     print(i)
 
-plt.bar(model_names, num_times_better)
-plt.title("No. times PCA improved test performance")
-plt.savefig("results/PCAperf.png")
+# plt.bar(model_names, num_times_better)
+# plt.title("No. times PCA improved test performance")
+# plt.savefig("results/PCAperf.png")
+# plt.show()
+
+x = np.arange(5)
+width = 0.1
+plt.bar(x-0.05, [value / 500 for value in total_dropping], width)
+plt.bar(x+0.05, [value / 500 for value in total_PCA], width)
+
+plt.xticks(x, model_names)
+plt.ylabel("Average scores")
+plt.legend(["Dropping performance", "PCA performance"])
+plt.ylim(0.8, 1)
 plt.show()
+# plt.savefig("results/PCAperf.png")

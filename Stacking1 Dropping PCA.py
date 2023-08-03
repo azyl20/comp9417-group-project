@@ -41,7 +41,7 @@ boost_test = []
 knn_train = []
 knn_test = []
 
-for i in range(50):
+for i in range(200):
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.15)
     # standardising and scaling training Xs
     scaler = StandardScaler()
@@ -74,7 +74,7 @@ for i in range(50):
     ]
 
     stack_classifier = StackingClassifier(
-        estimators=estimators, final_estimator=lgclassifier)
+        estimators=estimators, final_estimator=lgclassifier, stack_method="predict_proba")
 
     stack_classifier.fit(X_train, Y_train.ravel())
     train_score = stack_classifier.score(X_train, Y_train)
@@ -111,6 +111,7 @@ for i in range(50):
     # print(
     #     f"\nHistGradientBoosting classifier testing Accuracy: {test_score}")
 
+    # evaluating KNN on PCA reduced dataset
     pca = PCA(n_components=17)
     X_train = pca.fit_transform(X_train)
     X_test = pca.transform(X_test)
@@ -132,7 +133,7 @@ labels = ['stack_train', 'forest_train',
 
 i = 0
 for data in [stack_train, forest_train, boost_train, knn_train]:
-    plt.scatter(list(range(50)), data, label=labels[i], marker='.')
+    plt.scatter(list(range(200)), data, label=labels[i], marker='.')
     i += 1
 
 plt.xlabel('iterations')
@@ -145,7 +146,7 @@ labels = ['stack_test', 'forest_test',
           'boost_test', 'knn_test']
 i = 0
 for data in [stack_test, forest_test, boost_test, knn_test]:
-    plt.scatter(list(range(50)), data, label=labels[i], marker='.')
+    plt.scatter(list(range(200)), data, label=labels[i], marker='.')
     i += 1
 
 plt.xlabel('iterations')

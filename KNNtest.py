@@ -8,6 +8,7 @@ from sklearn.ensemble import HistGradientBoostingClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
 
 
 from statistics import mode
@@ -33,6 +34,12 @@ for i in range(500):
     scaler = StandardScaler()
     X_train = scaler.fit_transform(X_train)
     X_test = scaler.transform(X_test)
+
+    # # Uncomment for PCA optimisation
+    # pca = PCA(n_components=17)
+    # X_train = pca.fit_transform(X_train)
+    # X_test = pca.transform(X_test)
+
     # Data collection
     train_data = []
     test_data = []

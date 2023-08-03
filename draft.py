@@ -202,22 +202,22 @@ for model in [LogisticRegression(random_state=0),
     i += 1
 
 
-# x = np.arange(5)
-# width = 0.1
+x = np.arange(5)
+width = 0.1
 
-# plt.bar(x-0.2, dropped_model_train_data, width, color='lightsteelblue')
-# plt.bar(x-0.1, encoded_model_train_data, width, color='bisque')
-# plt.bar(x, ohe_model_train_data, width, color='palegreen')
-# plt.bar(x+0.1, dropped_model_test_data, width, color='cornflowerblue')
-# plt.bar(x+0.2, encoded_model_test_data, width, color='orange')
-# plt.bar(x+0.3, ohe_model_test_data, width, color='mediumseagreen')
+plt.bar(x-0.2, dropped_model_train_data, width, color='lightsteelblue')
+plt.bar(x-0.1, encoded_model_train_data, width, color='bisque')
+plt.bar(x, ohe_model_train_data, width, color='palegreen')
+plt.bar(x+0.1, dropped_model_test_data, width, color='cornflowerblue')
+plt.bar(x+0.2, encoded_model_test_data, width, color='orange')
+plt.bar(x+0.3, ohe_model_test_data, width, color='mediumseagreen')
 
-# plt.xticks(x, model_names)
-# plt.ylabel("Scores")
-# plt.legend(["Dropping (train)", "Label Encoding (train)", "OHE (train)",
-#            "Dropping (test)", "Label Encoding (test)", "OHE (test)"])
-# plt.show()
-# plt.savefig("results/dropping_label_OHE_compare.png")
+plt.xticks(x, model_names)
+plt.ylabel("Scores")
+plt.legend(["Dropping (train)", "Label Encoding (train)", "OHE (train)",
+           "Dropping (test)", "Label Encoding (test)", "OHE (test)"])
+plt.show()
+plt.savefig("results/dropping_label_OHE_compare.png")
 
 
 # dataset with no scaling nor dropping of NaN values

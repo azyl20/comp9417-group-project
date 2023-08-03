@@ -42,10 +42,12 @@ knn_test = []
 for i in range(200):
     print(i)
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.15)
-    # standardising and scaling training Xs
-    scaler = StandardScaler()
-    X_train = scaler.fit_transform(X_train)
-    X_test = scaler.transform(X_test)
+
+    # # comment out for no scaling
+    # # standardising and scaling training Xs
+    # scaler = StandardScaler()
+    # X_train = scaler.fit_transform(X_train)
+    # X_test = scaler.transform(X_test)
 
     # # comment out for no dimensionality reduction
     # pca = PCA()
@@ -63,7 +65,7 @@ for i in range(200):
     gradboost = HistGradientBoostingClassifier(max_depth=3)
 
     ############## K NEIGHBOURS ##############
-    knn = KNeighborsClassifier(n_neighbors=3)
+    knn = KNeighborsClassifier(n_neighbors=5)
 
     ############## STACKING ##############
     estimators = [
