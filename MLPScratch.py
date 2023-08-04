@@ -130,6 +130,7 @@ def hillclimbing(X, y, objective, best, n_iter, step_size):
   # plt.title('optimisation of MLP weights by Iteration')
   # plt.xlabel('Iteration')
   # plt.ylabel('Accuracy on Train Dataset')
+  # plt.show()
 	return [best, best_accuracy]
 
 
@@ -162,3 +163,4 @@ plt.plot(n_iters, accuracies)
 plt.title("Finding the best number of iterations for a high score")
 plt.xlabel('Number of iterations')
 plt.ylabel('Score')
+plt.show()
